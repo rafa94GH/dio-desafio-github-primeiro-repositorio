@@ -1,0 +1,219 @@
+Git & GitHub
+
+Primeiro abrir o terminal (prompt de comando - CMD no sistema operacional)
+
+Como listar a quantidade de pastas e diretorios do sistema?
+Se for no Windows o comando é "dir", primeiro abra o terminal vai no final da pasta padrão e digite o comando em questão.
+Ex.:  C:\Users\lourisvaldo>dir
+
+se for no sistema linux ou Mac utilise o comando é "ls"
+Ex.:  lourisvaldo@gmail.com-desktop:$ ls
+
+Como subir ou descer nível nesses diretórios?
+Como ir para uma pasta específica dentro do sistema operacional?
+Através do comando "cd" é possivel navegar entre pastas, ele é igual pra todos os sistemas operacionais.
+Ex.: C:\Users\lourisvaldo>cd /
+(ponha uma barra após o comando como no exemplo, e após teclar "enter" o comando  te leva para a abse do diretório "C:\")
+
+se usar o "dir" na base do diretório "C:\" ele vai listaras pastas presentes nesse diretório.
+
+E se quiser entrar na pasta Windows, por exemplo?
+Utilise "cd Windows"
+ex.:  C:\Users\Lourisvaldo>cd Windows
+
+se usar o "dir" nessa pasta windows, ele vai listar todas as pastas da pasta Windows.
+
+se for no linux utilize o comando "cd etc" pra acessar a pasta do sistema e "ls" para listar as pastas.
+
+E se eu quiser voltar ou retroceder na navegação?
+Nesse caso utilize o comando "cd .." tanto para windows como para o linux.
+Ex.:  C:\Users\Lourisvaldo>cd ..
+
+É sempre bom trabalhar com o terminal limpo, por isso utilize o comando "cls" (Clear Screen) pra limpar o terminal.
+Ex.:  C:\Users\Lourisvaldo>cls ..
+
+já no Lixux é o comando "clear" (ou ctrl + l).
+Ex.:  lourisvaldo@gmail-desktop:/$ clear
+
+A tecla "TAB" tem a função de auto completar, no windows se você der "cd W" e apertar o "TAB" o sistema reconhece que na pasta que você está tem uma pasta chamada "Windows" e ele já auto completa automaticamente.
+
+Como criar uma pasta?
+O comando é o "mkdir" (make directory) pra todos os sistemas.
+Ex.:  C:\>mkdir worspace
+(workspace é um nome exemplo pra sua pasta)
+deu o comando e não aconteceu nada, significa "silence for success", ou seja, se deu tudo certo o terminal não vai falar nada.
+
+Para navegar na pasta recem criada, utilize "cd workspace" (no linux serve o mesmo comando.
+Ex.:  C:\>cd workspace
+
+Use o comando "echo" para printar de volta no terminal uma frase ou texto que você passa. e se usar o "hello" ele com o "echo" ele devolve o que eu digitei.
+Ex.:  C:\workspace>echo hello
+
+use o simbolo ">" (maior que) tanto no Windows como no Linux,que é um redirecionador de fluxo, ele vai pegar o output, ou seja, a saída dessa função "echo" e vai jogar em um arquivo.
+Ex.:  C:\workspace>echo hello > hello.txt
+após teclar o enter o sistema vai verificar se tem um arquivo com esse nome (conforme o exemplo "hello.txt") e se não der nenhum erro é porque deu certo.
+
+Use o comando "del" (delete) para deletar arquivos.
+Ex.:  C:\>del workspace
+(fazendo isso o sistema vai perguntar se você quer deletar tudo que está dentro da pasta "workspace".
+
+Para navevar nos comandos executados utilize a tecla "↑" (seta pra cima)
+
+Para deletar um repositóro com todos os arquivos use o comando "rmdir" (remove directory) junto com "/S" e "/Q".
+Ex.:  C:\>rmdir workspace /S /Q
+
+No Linux é "rm" (remove) junto com "-rf".
+Ex.: lourisvaldo@gmail-desktop:/# rm -rf workspace/
+
+
+Entendendo como o GIT funciona por baixo dos panos
+
+SHA1
+
+A sigla SHA significa Secure Hash Algorithm (Algoritimo de Hash Seguro), é um conjunto de funções hash criptográficas projetadas pela NSA (Agência de Segurança Nacional dos EUA).
+A encriptação gera conjunto de characteres identificador de 40 dígitos.
+É uma forma curta de representar um arquivo.
+Ex.: 1 echo "ola mundo" | openssl sha1
+     2 > (stdin)= f9fc856e559b950175f2b7cd7dad61facbe58e7b
+
+Objetos Internos e Fundamentais do Git
+
+BLOBS
+
+exemplo:
+1 echo 'conteudo' | git hash-object --stdin
+2 > fc31e91b26cf85a55e072476de7f263c89260eb1
+3
+4 echo -e 'conteudo' | openssl sha1
+5 > 65b0d0dda479cc03cce59528e28961e498155f5c
+
+Conforme o exemplo, o uso da função "hash-object" junto com a flag "--stdin", serve para mostrar que a função em questão espera receber um arquivo (no caso um texto).
+Se passar essa string "conteudo" para essa função do GIT, ela (função) vai devolver o "sha1" desse conteúdo. Então esse conjunto identificador de 40 caracteres.
+
+Para fazer a mesma coisa, sem usar o GIT, usando o "openssl", especificando o "sha1" se usa o comando "echo -e 'conteudo' openssl sha1", passando novamente uma string e jogando ela para ser encriptada pelo "sha1", só que vai gerar um outro tipo de chave, um outro conjunto de caracteres. Por que isso acontece? 
+Porque esses objetos específicos do GIT, do jeito que o GIT lida e manipula eles, é através de objetos. Os arquivos ficam guardados dentro desse objeto chamado "blob", esse objeto contém metadados dentro dele.
+O objeto "blob" vai ter o tipo de objeto, então "blob" o tamanho dessa string ou desse arquivo, um "\0" e o conteudo desse arquivo (seja texto, binário, etc.).
+
+O segundo objetos são as árvores, as "trees". As "trees" armazenam blob's, é uma crescente: o "blob" sendo o bloco básico de composição, o "tree" armazenando e apontando para tipos de "blobs" diferentes, e um outro tipo de estrutura de dados, que são os "commits".
+O "tree" também contém metadados, ele também possui a "\0", ele aponta para um "blob" (que por sua vez tem um "sha1") e também guarda o nome desse arquivo. Então se reparar, o "blob" não guarda o nome do arquivo ele só guarda o "sha1" do arquivo, que são os caracteres identificador dele, e só.
+A arvore "tree" vai ser responsavel por montar toda a estrutura e onde está localizado os arquivos. Então o "tree" pode apontar tanto para "blob's" (que são "arquivos") como para outras arvores ("tree"). Por que que o comportamento é dessa forma?
+Porque os diretórios dentro de um sistema operacional, podem conter outros diretórios. Então, faz sentido que o GIT use um tipo de objeto que é recursivo, que são as árvores ("tree").
+As arvores também tem um "sha1" desse metadado, as bolhas, os "blob's", possuem o "sha1" do arquivo, a "tree" aponta para a "blob", e tem o "sha1" encriptado alí, os metadados da "tree". então se mudar alguma coisa, alguma vírgula em um arquivo na qual essa árvore está apontando, quando ela for gerar o "sha1" desses metadados o "sha1" do "blob" vai ter mudado, e consequentemente vai refletir o "sha1" da "tree".
+
+Então o "blob" é um objeto que encapsula esse comportamento de diretórios, ele é usado para apontar para diretórios que contém arquivos, e por consequência apontar para arquivos também.
+
+Por fim, o objeto mais importante de todos o "commit". Este por sua vez vai juntar tudo, ele vai dar sentido pra alteração que você está fazendo. O "commit" aponta para uma árvore (tree), para um parente(ou seja, para o último "commit" realizado antes dele), aponta para o autor e para uma mensagem também. Então o autor e a mensagem fazem parte dessa ideia. O que esses arquivos representados pelo "blob" e dentro dessas pastas, representados pela "tree" querem dizer? Elas significam uma alteração, você pode escrever uma mensagem nesse objeto chamado "commit", que vai estar explicando e dando significado pra esse monte de arquivo, dentro desse monte de pasta, e esse objeto também leva o nome do autor.
+O "commit" também tem um "timestamp", que é um carimbo de tempo. Esse objeto leva a data e hora certinha de quando ele foi criado.
+Os "commit's" também possuem um "sha1" e encriptação, que é a geração desse hash de 40 caracteres identificador, dos seus metadados. Isso significa que se você alterar uma "blob", um dado dentro de uma "blod" de um arquivo, ele vai gerar um "sha1" daquela "blob". Essa "blob" por sua vez tem uma "tree" apontando para ela, então se você alterou lá, vai alterar também os metadados da "tree".
+
+Sistema distribuido Seguro
+
+Por que o GIT é um sistema seguro?
+Imagine que você tenha o seu código, o seu repositório, hosteado em um servidor, na nuvem, por exemplo. Então, o código que você tem lá representa o estado final do seu código, do seu software, ele é a versão mais recente, mais atualizada. Suponha que esse repositório possui 30 pessoas contribuindo com ele de forma regular, essas também possuem uma versão desse código. Pelo fato dos "commits" serem tão difíceis de serem alterados, tanto a versão mais recente que está na máquina do servidor, como qualquer uma das outras 30 versões que estão distribuidas entre outras máquinas.
+
+Chaves SSH e Tokens
+
+Chave SSH
+
+É uma forma de estabelecer uma conexão segura e encriptada entre duas máquinas. No caso se conectar com o servidor do GitHub e configurar a maquina local como uma máquina confiável para o GitHub. Estabelecendo essa conexão com duas chaves, vai sempre ter uma chave pública e uma privada. Vai pegar a chave pública e colar no GitHub,e apartir do momento que fizer isso o GitHub vai conhecer sua máquina. Então todos os repositórios que tiver na máquina por esse processo SSH, quando for enviar código para o GitHub ele vai conhecer a assinatura da sua máquina, já vai ter uma conexão pré-estabelecida ali, vai ser possível enviar código sem precisar de uma senha.
+
+
+Primeiros comandos com o GIT
+
+Criando um repositório
+
+No Diretório "(C:)" crie uma pasta com o nome "workspace".
+Nessa pasta criada, crie uma nova pasta com o comando "mkdir" mais o nome da pasta.
+Ex.: $ mkdir livro-receitas
+
+O comando "git init" serve para o GIT inicializa-lo e possibilitar que o GIT de fato, gerencie e versione o código.
+Ex.: $ git init
+
+Pastas gerenciais do GIT ficam ocultas no diretório, pra poder vê-las se usa uma flag específica no comando "ls", que é o: "ls -a".
+Ex.: $ ls -a
+
+Se é a primeira vez que você tá usando o GIT, ele vai pedir algumas confugurações. Ele vai perdir o seu user name (nome de usuário) e um email. Lembrando que quando o objeto "commit" é criado, ele é com um autor atrelado a ele. Faça isso com o seguinte comando "git config --global" junto com "user.email" mais o email do autor.
+Ex.: $ git config --global user.email "lourisvaldo@gmail.com"
+
+Após esse comado, configure o user name com o comando 'git config --global user.name "nome"(insira o nome aqui)'
+Ex.: $ git config --global user.name "lourisvaldo"
+
+Adicionando um Arquivo
+
+Markdown
+O arquivo Markdown nada mais é do que uma forma mais humana de se escrever um arquivo HTML sem que você tenha que entender como que o HTML funciona (O HTML é o esqueleto é a estrutura básica de qualquer página na web). Pra colocar texto de tamanho diferente no HTML usa-se as "tags" h1, h2, h3 e assim sucessivamente. Transpondo isso para Markdown, pra você escrever um título grande, de nível um, você coloca "#" (hashtag) antes.
+Uma "#" significa que você está usando o "h1"; duas "##" quer dizer "h2"; Três "###" quer dizer "h3" e assim sucessivamente.
+Quando se usa esse arquivo especial '.mt' que é o Markdown, está se usando uma estrutura simples para modificar o comportamento desse texto para que ele fique mais bonito.
+O Markdown começa com coisas bem simples, mas pode fazer coisas complexas.
+
+Pra fazer lista ordenada se utiliza " - " (espaço + sinal de menos + espaço).
+Pra gerar negrito "**" dois asterisco.
+Pra gerar texto itálico "_" underline.
+
+Ciclo de vida dos arquivos
+
+Git Init
+O comando ".git/" inicializa um conceito do GIT chamdo "repositório". Quando se usa o "git init", estamos de fato criando um repositório dentro de um diretório, dentro de uma pasta.
+
+
+Tracked ou Untracked
+
+Dentro de "tracked", dentro dos arquivos que são rastreáveis pelo GIT ele pode se dividir em 3 estágios diferentes:
+Unmodified, Modified e Staged.
+
+E claro, o outro agrupamento, que é o "Untracked", que são os arquivos que o GIT ainda não tem conhecimento deles.
+
+"Unmodified" é o arquivo que ainda não foi modificado. 
+
+"Modified" é o arquivo "Unmodified" que sofreu modificação. Por exemplo se você abrir o arquivo de texto e alterar alguma coisa, ele muda automaticamente de "unmodified" para "modified".
+
+"Staged" é onde ficam os arquivos que estão se preparando pra poder fazer parte de um outro tipo de agrupamento.
+
+Temos dos ambientes: Ambiente de desenvolvimento (tudo o que está na máquina) e o Servidor.
+
+O "git status" vai ajudar a monitorar os status dos arquivos.
+Ex.: $ git status
+
+Para criar um commit de fato use o comando "git commit -m" (mais a mensagem).
+Ex.: $ git commit -m "cria pasta receitas, move arquivo para receitas"
+
+O comando "git add/rm <nome do arquivo>..." serve para atualizar o arquivo.
+
+O comando "git restore <nome do arquivo>..." serve para restaurar o arquivo.
+
+Para mudar um arquivo de uma pasta para outra use o comando "mv (nome do arquivo) ./(repositório para o qual se quer transferir o arquivo)".
+Ex.: $ mv strogonoff.md ./receitas
+
+Para mudar o email do arquivo GIT, ou seja reescrever as configurações de email use o comando completo "git config --global --unset user.email" .
+
+Para mudar o nome do arquivo GIT, reescrever as configurações de nome use o comando completo "git config --global --unset user.name" .
+
+Para empurrar a versão do nosso repositório local para um repositório remoto, uma origem remota, primeiramente deve-se adicionar a origem na onde se está enviando o(s) arquivo(s), o comando para isso é o:
+"git remote add origin (mais o endereço do local, pode ser uma URL)".
+Ex.: $ git remote add origin https://github.com/rafa94GH/livro-receitas.git
+("origin" é só um apelido para o link)
+
+Para listar repositórios remotos que se tem cadastrado utilize o comando "git remote -v".
+Ex.: $ git remote -v
+
+O comando para levar o código do repositório local para um repositório  remoto é o "git push" (tradução do ingles é "empurrar" propriamente dita) mais o apelido do link junto com o "master" que é o nome da branch que estamos enviando esse código.
+Ex.: $ git push origin master
+(após dar enter ele vai pedir suas credenciais ou autenticação no GitHub, em seguida com a autenticação feita ele vai enviar o arquivo do seu repositório local para o remoto).
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
